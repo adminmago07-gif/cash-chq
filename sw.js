@@ -1,6 +1,6 @@
 // App ka bahari dhancha (shell) phone mein save rehta hai taaki app jaldi khule.
 // Data hamesha live Apps Script se aata hai (wo cache nahi hota).
-const CACHE = 'chq-cash-v1';
+const CACHE = 'chq-cash-v2';
 const SHELL = ['./', './index.html', './config.js', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png', './icons/apple-touch-icon.png'];
 
