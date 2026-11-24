@@ -30,6 +30,17 @@
 
 <div id="splash"><div class="logo">₹</div><b style="font-size:19px">Chq &amp; Cash Receiving</b><div class="spin"></div><small>Khul raha hai...</small></div>
 <div id="off" class="hide"><div class="logo">📶</div><b style="font-size:18px">Internet nahi hai</b><small>Net on karo, phir dobara try karo.</small><button onclick="start()">Dobara try karo</button></div>
+<div id="ios" class="hide" style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(135deg,#7a3fb5 0%,#c1449a 40%,#e14f78 70%,#f5823a 100%);color:#fff;text-align:center;padding:24px;box-sizing:border-box;z-index:6">
+  <div class="logo">₹</div><b style="font-size:19px">iPhone par app install karo</b>
+  <div style="background:rgba(255,255,255,.15);border-radius:14px;padding:14px 16px;text-align:left;line-height:1.9;font-size:15px">
+    1. Neeche Safari ka <b>Share</b> button dabao <span style="font-size:20px">⬆️</span><br>
+    2. Scroll karke <b>"Add to Home Screen"</b> dabao ➕<br>
+    3. Upar right mein <b>Add</b> dabao<br>
+    4. Home screen par <b>₹ Chq &amp; Cash</b> icon se kholo
+  </div>
+  <small style="opacity:.85">Ye sirf <b>Safari</b> mein hota hai (Chrome mein nahi).</small>
+  <button onclick="window.__go=1;start()">Abhi bina install kiye kholo</button>
+</div>
 <div id="setup" class="hide"><div class="logo">⚙️</div><b>Setup baaki hai</b><small>config.js mein apna Apps Script <code>/exec</code> link daalo.</small></div>
 
 <div id="inst" class="hide" style="position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9;display:flex;gap:8px;align-items:center;background:#fff;border-radius:14px;padding:8px 8px 8px 14px;box-shadow:0 10px 30px rgba(0,0,0,.25);font-size:13px;max-width:92vw">
@@ -49,7 +60,7 @@
   // Chrome khud prompt na de to bhi 3 sec baad tarika dikhao
   if (!ios && !standalone) setTimeout(() => { if (!deferred) { document.getElementById('instTxt').textContent = '📲 Install: upar ⋮ menu → "Install app" / "Add to Home screen"'; document.getElementById('instBtn').style.display = 'none'; show(); } }, 3000);
   window.addEventListener('beforeinstallprompt', () => { document.getElementById('instTxt').textContent = '📲 Ise app ki tarah install karo'; document.getElementById('instBtn').style.display = ''; });
-  if (ios && !standalone) { document.getElementById('instTxt').textContent = '📲 Install: Share ⬆️ dabao → "Add to Home Screen"'; document.getElementById('instBtn').style.display = 'none'; setTimeout(show, 2500); }
+
   document.getElementById('instBtn').onclick = async () => { if (!deferred) return; deferred.prompt(); await deferred.userChoice; deferred = null; document.getElementById('inst').classList.add('hide'); };
   document.getElementById('instX').onclick = () => { document.getElementById('inst').classList.add('hide'); try { localStorage.setItem('instHide', '1'); } catch (_) {} };
 </script>
@@ -62,7 +73,12 @@
     if (!navigator.onLine) { $('splash').classList.add('hide'); $('off').classList.remove('hide'); return; }
     $('off').classList.add('hide'); $('splash').classList.remove('hide');
     // iPhone/iPad: Safari Google ko frame ke andar login/cookie nahi rakhne deta, isliye seedha kholo
-    if (/iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) { location.replace(url); return; }
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (isIOS) {
+      const home = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+      if (home || window.__go) { location.replace(url); return; }      // Home screen icon se khula -> seedha app
+      $('splash').classList.add('hide'); $('ios').classList.remove('hide'); return;   // Safari mein -> pehle install ka tarika
+    }
     const f = $('app');
     f.onload = () => setTimeout(() => $('splash').classList.add('hide'), 300);
     f.src = url;
