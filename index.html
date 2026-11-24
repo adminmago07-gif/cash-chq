@@ -46,6 +46,9 @@
   const show = () => { if (!standalone && !hidden()) document.getElementById('inst').classList.remove('hide'); };
   window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; show(); });
   window.addEventListener('appinstalled', () => document.getElementById('inst').classList.add('hide'));
+  // Chrome khud prompt na de to bhi 3 sec baad tarika dikhao
+  if (!ios && !standalone) setTimeout(() => { if (!deferred) { document.getElementById('instTxt').textContent = '📲 Install: upar ⋮ menu → "Install app" / "Add to Home screen"'; document.getElementById('instBtn').style.display = 'none'; show(); } }, 3000);
+  window.addEventListener('beforeinstallprompt', () => { document.getElementById('instTxt').textContent = '📲 Ise app ki tarah install karo'; document.getElementById('instBtn').style.display = ''; });
   if (ios && !standalone) { document.getElementById('instTxt').textContent = '📲 Install: Share ⬆️ dabao → "Add to Home Screen"'; document.getElementById('instBtn').style.display = 'none'; setTimeout(show, 2500); }
   document.getElementById('instBtn').onclick = async () => { if (!deferred) return; deferred.prompt(); await deferred.userChoice; deferred = null; document.getElementById('inst').classList.add('hide'); };
   document.getElementById('instX').onclick = () => { document.getElementById('inst').classList.add('hide'); try { localStorage.setItem('instHide', '1'); } catch (_) {} };
