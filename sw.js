@@ -1,8 +1,8 @@
 // App ka bahari dhancha (shell) phone mein save rehta hai taaki app jaldi khule.
 // Data hamesha live Apps Script se aata hai (wo cache nahi hota).
-const CACHE = 'chq-cash-v3';
+const CACHE = 'chq-cash-v4';
 const SHELL = ['./', './index.html', './config.js', './manifest.webmanifest',
-  './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png', './icons/apple-touch-icon.png'];
+  './icon-192.png', './icon-512.png', './maskable-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
