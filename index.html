@@ -32,6 +32,24 @@
 <div id="off" class="hide"><div class="logo">📶</div><b style="font-size:18px">Internet nahi hai</b><small>Net on karo, phir dobara try karo.</small><button onclick="start()">Dobara try karo</button></div>
 <div id="setup" class="hide"><div class="logo">⚙️</div><b>Setup baaki hai</b><small>config.js mein apna Apps Script <code>/exec</code> link daalo.</small></div>
 
+<div id="inst" class="hide" style="position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9;display:flex;gap:8px;align-items:center;background:#fff;border-radius:14px;padding:8px 8px 8px 14px;box-shadow:0 10px 30px rgba(0,0,0,.25);font-size:13px;max-width:92vw">
+  <span id="instTxt">📲 Ise app ki tarah install karo</span>
+  <button id="instBtn" style="background:linear-gradient(135deg,#16a05d,#2b7de0);color:#fff;padding:8px 14px">Install</button>
+  <button id="instX" style="background:#eee;color:#555;padding:8px 10px">✕</button>
+</div>
+<script>
+  // Install button: Android/Chrome par seedha install, iPhone par tarika batata hai
+  let deferred = null;
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const hidden = () => { try { return localStorage.getItem('instHide') === '1'; } catch (_) { return false; } };
+  const show = () => { if (!standalone && !hidden()) document.getElementById('inst').classList.remove('hide'); };
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; show(); });
+  window.addEventListener('appinstalled', () => document.getElementById('inst').classList.add('hide'));
+  if (ios && !standalone) { document.getElementById('instTxt').textContent = '📲 Install: Share ⬆️ dabao → "Add to Home Screen"'; document.getElementById('instBtn').style.display = 'none'; setTimeout(show, 2500); }
+  document.getElementById('instBtn').onclick = async () => { if (!deferred) return; deferred.prompt(); await deferred.userChoice; deferred = null; document.getElementById('inst').classList.add('hide'); };
+  document.getElementById('instX').onclick = () => { document.getElementById('inst').classList.add('hide'); try { localStorage.setItem('instHide', '1'); } catch (_) {} };
+</script>
 <script src="config.js"></script>
 <script>
   const $ = id => document.getElementById(id);
