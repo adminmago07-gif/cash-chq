@@ -61,6 +61,8 @@
     if (!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec/.test(url)) { $('splash').classList.add('hide'); $('setup').classList.remove('hide'); return; }
     if (!navigator.onLine) { $('splash').classList.add('hide'); $('off').classList.remove('hide'); return; }
     $('off').classList.add('hide'); $('splash').classList.remove('hide');
+    // iPhone/iPad: Safari Google ko frame ke andar login/cookie nahi rakhne deta, isliye seedha kholo
+    if (/iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) { location.replace(url); return; }
     const f = $('app');
     f.onload = () => setTimeout(() => $('splash').classList.add('hide'), 300);
     f.src = url;
